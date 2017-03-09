@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hu.ssmFrame.dao.AttachmentMapper">
+
+	<resultMap id="AttachmentMap" type="com.hu.ssmFrame.pojo.Attachment">
+		<id  column="IDT_YWBL_ATTACHMENT" property="attachmentId" jdbcType="NVARCHAR" />
+		<result column="ORD" property="ord" jdbcType="NVARCHAR" />
+		<result column="SJ_FILE_NAME" property="sjFilename" jdbcType="NVARCHAR" />
+		<result column="SOURCE_FILE" property="sourceFile" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobInputStreamTypeHandler"/>
+		<result column="SOURCE_FILE_NAME" property="sourceFilename" jdbcType="NVARCHAR" />
+		<result column="DOWNLOADED" property="downloaded" jdbcType="NCHAR" typeHandler="org.apache.ibatis.type.BooleanTypeHandler"/>
+	</resultMap>
+<!-- 根据主键，更新附件表的标志位字段downloaded为1，默认0 -->
+	<update id="updateFlag" >
+		UPDATE T_YWBL_ATTACHMENT SET DOWNLOADED = '1' WHERE IDT_YWBL_ATTACHMENT = #{aid}
+	</update>
+
+<!-- 查询所有没有下载过的附件 -->
+	<select id="selectNotDownloaded" resultMap="AttachmentMap">
+		 <![CDATA[
+SELECT * FROM 
+(
+SELECT A.*, ROWNUM RN 
+FROM (SELECT IDT_YWBL_ATTACHMENT
+		,ORD,SJ_FILE_NAME,SOURCE_FILE
+		,SOURCE_FILE_NAME,DOWNLOADED 
+    FROM T_YWBL_ATTACHMENT WHERE SOURCE_FILE IS NOT NULL AND DOWNLOADED = '0') A 
+WHERE ROWNUM <= 50 
+) 
+WHERE RN >= 1
+]]>
+	</select>
+	
+<!-- 	根据主键查询 -->
+	<select id="selectById"  resultMap="AttachmentMap">
+	SELECT * FROM T_YWBL_ATTACHMENT WHERE IDT_YWBL_ATTACHMENT = #{attachId}
+	</select>
+	
+<!-- 根据事项主表名称和事项主键,选用附件表的正确外键,查询内容不为空的附件信息 -->
+	<select id="selectByForeignKey" resultMap="AttachmentMap">
+		SELECT 
+			IDT_YWBL_ATTACHMENT
+			,ORD,SJ_FILE_NAME,SOURCE_FILE
+			,SOURCE_FILE_NAME,DOWNLOADED 
+        FROM T_YWBL_ATTACHMENT
+        <where>
+        	<include refid="condition_foreign_key"></include>
+        </where> 
+	</select>
+	
+<!-- 根据事项主表名称和事项主键,选用附件表的正确外键,查询内容不为空的附件数量 -->
+	<select id="countByForeignKey" resultType="java.lang.Long">
+		SELECT 
+			COUNT(*) 
+        FROM T_YWBL_ATTACHMENT
+        <where>
+        	<include refid="condition_foreign_key"></include>
+        </where> 
+	</select>
+		
+<!-- 	根据事项主表名称和事项主键,选用附件表的正确外键.拼接查询条件 -->
+	<sql id="condition_foreign_key">
+		<choose>
+			<when test="tableName = 'BN_ZJ_IND_ITEM_INF'">
+				AND idzj_ind_item_inf = #{fkValue}
+			</when>
+			<when test="tableName = 'BN_ZJ_VEHICLE_INF'">
+				AND idzj_vehicle_inf = #{fkValue}
+			</when>
+			<otherwise>
+				AND 1=2
+			</otherwise>
+		</choose>
+		AND SOURCE_FILE IS NOT NULL
+	</sql>
+</mapper>

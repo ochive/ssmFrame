@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- 配置整合mybatis过程 -->
+    <!-- 1.配置数据库相关参数properties的属性：${url} -->
+    <context:property-placeholder location="classpath:jdbc.properties" />
+	
+    <!-- 2.数据库连接池 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+  		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@10.132.1.145:1521:scgl"/>
+        <property name="username" value="JSZJJ_XZSP_QZ"/> 
+        <property name="password" value="JSZJJ_XZSP_QZ"/>
+         
+        <!-- 池启动时创建的连接数量 -->
+        <property name="initialSize" value="50"/>
+        <!-- 在不新建连接的条件下，池中保持空闲的最少连接数。 -->
+        <property name="minIdle" value="30"/>
+        <!-- 同一时间可以从池分配的最多连接数量。设置为0时表示无限制。 -->
+        <property name="maxActive" value="200"/>
+        
+        <!-- 事务是否自动提交  -->
+        <property name="defaultAutoCommit"  value="false"/>   
+    </bean>
+
+    <!-- 3.配置SqlSessionFactory对象 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 注入数据库连接池 -->
+        <property name="dataSource" ref="dataSource" />
+        <!-- 配置MyBaties全局配置文件:mybatis-config.xml -->
+        <property name="configLocation" value="classpath:mapper/mybatis-config.xml" />
+        <!-- 扫描entity包 使用别名 -->
+        <property name="typeAliasesPackage" value="com.hu.ssmFrame.pojo" />
+        <!-- 扫描sql配置文件:mapper需要的xml文件 -->
+<!--      由于mybatis中已经配置了mappers,这里如果再配置,就会报错:Result Maps collection already contains value   
+<property name="mapperLocations" value="classpath:com/hu/ssmFrame/dao/*Mapper.xml" /> -->
+    </bean>
+    
+    <!-- 4.配置spring的mybatisHelper -->
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+    	<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+    </bean>
+    
+    <!-- 扫描mybatis的dao接口,自动生成代理实现类 -->
+     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    	 <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+     	 <property name="basePackage" value="com.hu.ssmFrame.dao"/>
+     </bean>
+    
+</beans>

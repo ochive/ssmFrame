@@ -155,12 +155,21 @@ public class FilePathService implements IFilePathService {
 		zipInfo = filePathMapper.selectZipPathByItemInfo(filePath);
 		
 		if(zipInfo!=null && zipInfo.getFileCount() > 0){
+			if(logger.isDebugEnabled()){
+				logger.debug("找到批量下载包信息,开始检查附件个数有无变化");
+			}
 			//1.a.查询附件表中该办件的附件数量,与路径信息对比.相同则3,不同则1.b
 			Long attCount = attachmentMapper.countByForeignKey(filePath.getItem(), filePath.getItemPk());
 			if(attCount.intValue()==zipInfo.getFileCount()){
+				if(logger.isDebugEnabled()){
+					logger.debug("附件数量一致,返回路径信息");
+				}
 				//返回找到的批量下载的压缩包
 				return zipInfo;
 			}else{
+				if(logger.isDebugEnabled()){
+					logger.debug("附件个数有变化,删除现有附件和路径信息.重新下载.");
+				}
 				//1.b.删除现有的文件和路径信息,转2
 				new File(zipInfo.getFilePath()).delete();
 				filePathMapper.deleteById(zipInfo.getIdFilePath());
@@ -189,6 +198,9 @@ public class FilePathService implements IFilePathService {
 		BufferedInputStream bis=null;
 		ZipOutputStream zipOutputStream=null;
 		
+		if(logger.isDebugEnabled()){
+			logger.debug("开始从数据库批量下载和处理办件的附件");
+		}
 		try {
 			//2.根据表名和主键,使用相应的条件查询附件表的数据.
 			List<Attachment> attachList = attachmentMapper.selectByForeignKey(filePath.getItem(), filePath.getItemPk());
@@ -199,21 +211,21 @@ public class FilePathService implements IFilePathService {
 				destFile=new File(createDirName(), filePath.getItemPk()+"@"+filePath.getItem()+"@附件包.zip");
 				zipOutputStream=new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(destFile)));
 				//为了提高处理速度,压缩方法为仅打包归档存储,压缩级别为最低的0.
-				zipOutputStream.setLevel(0);
-				zipOutputStream.setMethod(ZipOutputStream.STORED);
+				//zipOutputStream.setLevel(0);
+				//zipOutputStream.setMethod(ZipOutputStream.STORED);
 				
 				for(Attachment attach:attachList){
 					try {
 						//创建ZIP实体，并添加进压缩包 
 						ZipEntry zipEntry=new ZipEntry(attach.getSourceFilename());
-						zipEntry.setMethod(ZipEntry.STORED);
+						//zipEntry.setMethod(ZipEntry.STORED);
 						zipOutputStream.putNextEntry(zipEntry);
 						bis=new BufferedInputStream(attach.getSourceFile());
 						
 						//读取待压缩的文件并写进压缩包里
 						byte[] byt=new byte[2048];
-						int len=-1;
-						while((len=bis.read(byt, 0, len))!=-1){
+						int len=-1;//存放实际读取的长度
+						while((len=bis.read(byt))!=-1){
 							zipOutputStream.write(byt, 0, len);
 						}
 					} catch (IOException e) {
@@ -222,10 +234,16 @@ public class FilePathService implements IFilePathService {
 						bis.close();
 					}
 				}
+				if(logger.isDebugEnabled()){
+					logger.debug("文件打包完成!路径:"+destFile.getCanonicalPath());
+				}
 				//2.b 并插入路径表,然后返回路径信息.
 				zipInfo=new FilePath(filePath.getItem(), filePath.getItemPk(), destFile.getCanonicalPath(), destFile.getName(),
 						1, null, attachList.size());
 				filePathMapper.insert(zipInfo);
+				if(logger.isDebugEnabled()){
+					logger.debug("路径信息存入完成!");
+				}
 			}
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);

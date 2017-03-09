@@ -20,7 +20,7 @@
         <!-- 池启动时创建的连接数量 -->
         <property name="initialSize" value="50"/>
         <!-- 在不新建连接的条件下，池中保持空闲的最少连接数。 -->
-        <property name="minIdle" value="30"/>
+        <property name="minIdle" value="40"/>
         <!-- 同一时间可以从池分配的最多连接数量。设置为0时表示无限制。 -->
         <property name="maxActive" value="200"/>
         

@@ -1,18 +1,10 @@
 package com.hu.ssmFrame.dao;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.hu.ssmFrame.pojo.Attachment;
 
 public class AttachmentMapperTest {
 	//ioc容器

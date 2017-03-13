@@ -95,23 +95,10 @@ public class FilePathService implements IFilePathService {
 	 * @return 附件在文件系统中存放位置的File对象.
 	 */
 	public File createFileFromAttach(Attachment attach) {
-		String dirName=null;//文件名
+		String dirName=createDirName();//文件名
 		String filename=null;//存文件的目录名
 		File file=null;
-		
-		Calendar cal=Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis());
-		
-		//1.拼接附件文件存放的目录,如:"D:\workspace\zjj_approve\ssmFrame2017\3\"
-		dirName=Const.ROOT_LOCATION+"/"+cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1);
-		
-		file=new File(dirName);
-		//如果目录不存在,则创建
-		if(!(file.exists())){
-			file.mkdirs();
-			file=null;
-		}
-		
+
 		//2.目标文件命名
 		//attachmentFiles/2017/2/办件主键xxxx/附件主键xxxxx/123.doc
 		//附件主键+目录名+原文件名(使用收件文件名的话没有后缀)+,防止文件名重复
@@ -126,15 +113,15 @@ public class FilePathService implements IFilePathService {
 	 * 如果该目录不存在,则会创建.
 	 * @return 目录名
 	 */
-	public String createDirName() {
+	public static String createDirName() {
 		String dirName=null;//文件名
 		File file=null;
 		
 		Calendar cal=Calendar.getInstance();
 		cal.setTimeInMillis(System.currentTimeMillis());
 		
-		//1.拼接附件文件存放的目录,如:"D:\workspace\zjj_approve\ssmFrame2017\3\"
-		dirName=Const.ROOT_LOCATION+"/"+cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1);
+		//1.拼接附件文件存放的目录,如:"D:\workspace\zjj_approve\ssmFrame2017\3\12"
+		dirName=Const.ROOT_LOCATION+"/"+cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1)+"/"+cal.get(Calendar.DATE);
 		
 		file=new File(dirName);
 		//如果目录不存在,则创建

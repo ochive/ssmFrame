@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,6 @@ import com.hu.ssmFrame.service.AutoReadAndDownloadAttach;
  * 在监听器启动之前得先加载spring bean，所以自动注入的注解在监听器里是不能用的。
  * 但可以使用从servletContext对象中创建applicationContext的方法获取ioc容器
  */
-//@WebListener
 public class StartAutoReadListener implements ServletContextListener {
 	private Logger logger=LoggerFactory.getLogger(StartAutoReadListener.class);
 

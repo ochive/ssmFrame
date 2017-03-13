@@ -5,11 +5,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Calendar;
 import java.util.List;
 
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +16,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 
-import com.hu.ssmFrame.constrant.Const;
 import com.hu.ssmFrame.dao.AttachmentMapper;
 import com.hu.ssmFrame.dao.FilePathMapper;
 import com.hu.ssmFrame.pojo.Attachment;
 import com.hu.ssmFrame.pojo.FilePath;
 import com.hu.ssmFrame.service.IAttachmentService;
-import com.hu.ssmFrame.service.IFilePathService;
 
 @Service("IAttachmentService")
 public class AttachmentService implements IAttachmentService{
@@ -50,7 +45,7 @@ public class AttachmentService implements IAttachmentService{
 				String filename=null;
 				File file=null;
 				FilePath filePath=null;
-				String dirName = createDirForAttach();
+				String dirName = FilePathService.createDirName();
 				
 				//循环处理，保存文件
 				for(Attachment attach:attList){
@@ -92,28 +87,6 @@ public class AttachmentService implements IAttachmentService{
 		}
 	}
 
-	/**
-	 * 拼接并创建附件存放的目录名
-	 * @return 目录名
-	 */
-	public String createDirForAttach() {
-		String dirName=null;//文件名
-		File file=null;
-		
-		Calendar cal=Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis());
-		
-		//附件文件存放的目录,如:"D:\workspace\zjj_approve\ssmFrame2017\3\"
-		dirName=Const.ROOT_LOCATION+"/"+cal.get(Calendar.YEAR)+"/"+(cal.get(Calendar.MONTH)+1);
-		
-		file=new File(dirName);
-		//如果目录不存在,则创建
-		if(!(file.exists())){
-			file.mkdirs();
-			file=null;
-		}
-		return dirName;
-	}
 	
 	
 

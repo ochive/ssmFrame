@@ -213,6 +213,7 @@ public class FilePathService implements IFilePathService {
 				//为了提高处理速度,压缩方法为仅打包归档存储,压缩级别为最低的0.
 				//zipOutputStream.setLevel(0);
 				//zipOutputStream.setMethod(ZipOutputStream.STORED);
+							
 				
 				for(Attachment attach:attachList){
 					try {
@@ -222,16 +223,19 @@ public class FilePathService implements IFilePathService {
 						zipOutputStream.putNextEntry(zipEntry);
 						bis=new BufferedInputStream(attach.getSourceFile());
 						
+						byte[] byt=new byte[8192];
+						int len=-1;//存放实际读取的长度	
+						
 						//读取待压缩的文件并写进压缩包里
-						byte[] byt=new byte[2048];
-						int len=-1;//存放实际读取的长度
 						while((len=bis.read(byt))!=-1){
 							zipOutputStream.write(byt, 0, len);
 						}
 					} catch (IOException e) {
 						throw new RuntimeException(e);
 					}finally{
-						bis.close();
+						if(bis!=null){
+							bis.close();
+						}
 					}
 				}
 				if(logger.isDebugEnabled()){
@@ -248,7 +252,9 @@ public class FilePathService implements IFilePathService {
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}finally{
-			zipOutputStream.close();
+			if(zipOutputStream!=null){
+				zipOutputStream.close();
+			}
 		}
 		return zipInfo;
 	}

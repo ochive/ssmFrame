@@ -14,3 +14,8 @@ c。提供下载
 1.自动下载监听器,部署前要把注解放开.保证可以进行扫描
 2.修改AttachmentMapper.xml中的一次下载数据量
 3.修改log4j.
+
+项目下载页位置:
+工业产品:web2\jsp\business\businfo.jsp
+工业产品集团公司:web2\jsp\business\businfoJT.jsp
+机动车:web2/jsp/business/jdchaqjcjghzhNew.jsp

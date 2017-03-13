@@ -59,12 +59,13 @@ WHERE RN >= 1
 	</select>
 		
 <!-- 	根据事项主表名称和事项主键,选用附件表的正确外键.拼接查询条件 -->
+<!-- mybatis中动态sql使用的是ognl表达式 -->
 	<sql id="condition_foreign_key">
 		<choose>
-			<when test="tableName = 'BN_ZJ_IND_ITEM_INF'">
+			<when test="tableName eq 'BN_ZJ_IND_ITEM_INF'">
 				AND idzj_ind_item_inf = #{fkValue}
 			</when>
-			<when test="tableName = 'BN_ZJ_VEHICLE_INF'">
+			<when test="tableName eq 'BN_ZJ_VEHICLE_INF'">
 				AND idzj_vehicle_inf = #{fkValue}
 			</when>
 			<otherwise>

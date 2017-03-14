@@ -145,6 +145,9 @@ public class FileDownloadController {
 			//3.调用模型层
 			FilePath zipPath = iFilePathService.findZipByItemInfo(filePath);
 			
+			if(zipPath==null){
+				throw new RuntimeException("没找到附件路径信息");
+			}
 			//4.提供下载
 			//a.读取文件
 			File file=new File(zipPath.getFilePath());

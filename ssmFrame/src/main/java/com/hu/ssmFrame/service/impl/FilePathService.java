@@ -204,8 +204,9 @@ public class FilePathService implements IFilePathService {
 				
 				for(Attachment attach:attachList){
 					try {
-						//创建ZIP实体，并添加进压缩包 
-						ZipEntry zipEntry=new ZipEntry(attach.getSourceFilename());
+						//创建ZIP实体，并添加进压缩包
+						//2017.03.14 由于存在企业的附件SourceFilename重名,导致压缩时报错dumplicate entry,增加标志
+						ZipEntry zipEntry=new ZipEntry(System.currentTimeMillis()+"@"+attach.getSourceFilename());
 						//zipEntry.setMethod(ZipEntry.STORED);
 						zipOutputStream.putNextEntry(zipEntry);
 						bis=new BufferedInputStream(attach.getSourceFile());

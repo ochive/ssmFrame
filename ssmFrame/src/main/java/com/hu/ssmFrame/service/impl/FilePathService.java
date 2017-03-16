@@ -55,7 +55,7 @@ public class FilePathService implements IFilePathService {
 		return filePath;
 	}
 
-	
+	@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.READ_COMMITTED,rollbackFor=Exception.class)
 	@Override
 	public FilePath dealAttachByAttid(String attId) {
 		FilePath filePath=null;//封装附件文件路径信息
@@ -179,6 +179,7 @@ public class FilePathService implements IFilePathService {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
+	@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.READ_COMMITTED,rollbackFor=Exception.class)
 	public FilePath findAttachsAndPackageThenSave(FilePath filePath) throws Exception{
 		FilePath zipInfo=null;
 		File destFile=null;//封装压缩包的路径信息

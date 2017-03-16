@@ -42,6 +42,7 @@ spring 和springmvc 分父子容器，ContextLoaderListener才会给@Service加�
         <property name="prefix" value="/WEB-INF/jsp/" />
         <property name="suffix" value=".jsp" />
      </bean>
-
-
+	
+<!-- 	 注册全局异常处理器 -->
+	 <bean id="exceptionHandler" class="com.hu.ssmFrame.core.exception.GlobalExceptionHandler"/>
 </beans>

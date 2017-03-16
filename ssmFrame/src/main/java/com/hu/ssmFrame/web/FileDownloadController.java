@@ -3,11 +3,10 @@ package com.hu.ssmFrame.web;
 import java.io.File;
 import java.io.FileInputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +14,8 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.hu.ssmFrame.core.exception.CustomException;
+import com.hu.ssmFrame.core.utils.MyWebUtils;
 import com.hu.ssmFrame.pojo.FilePath;
 import com.hu.ssmFrame.service.IAttachmentService;
 import com.hu.ssmFrame.service.IFileDownloadService;
@@ -25,7 +26,7 @@ import com.hu.ssmFrame.service.IFilePathService;
  * 1。提供文件下载的页面
  * 2.用户点击下载链接时，提供文件的下载
  * @author mudking
- *
+ *2017.03.15 由于市局的要求,所有下载增加一个企业名称参数,下载时文件名加入企业名称
  */
 @Controller
 @RequestMapping("/fileService")
@@ -37,7 +38,6 @@ public class FileDownloadController {
 	@Autowired
 	IFileDownloadService iFileDownloadService;
 	
-	private static final Logger logger=LoggerFactory.getLogger(FileDownloadController.class);
 	/**
 	 * 用户访问时，根据参数，准备相应的视图数据并跳转
 	 * @param tableName
@@ -87,13 +87,14 @@ public class FileDownloadController {
 	
 	/**
 	 * 用户在下载页面点击文件下载链接时。提供文件下载
-	 * @param id_file_paths
+	 * @param attachId 附件的主键
+	 * @param corpName 企业名称
 	 * @throws Exception 抛出异常让spring报错
 	 */
 	@RequestMapping(value="fetchFile",method=RequestMethod.GET)
-	public void fetchFile(String attachId,HttpServletResponse response) throws Exception{
-		if(StringUtils.isBlank(attachId)){
-			throw new RuntimeException("附件id不能为空");
+	public void fetchFile(String attachId,String corpName,HttpServletRequest request,HttpServletResponse response) throws Exception{
+		if(StringUtils.isBlank(attachId)||StringUtils.isBlank(corpName)){
+			throw new RuntimeException("附件id,企业名称不能为空");
 		}
 		
 		try {
@@ -104,22 +105,18 @@ public class FileDownloadController {
 			
 			//3.设置响应头
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", file.getName()));
+			//对文件名做处理,防止乱码
+			String fileName = MyWebUtils.convertToDownloadName(request, corpName+"@"+file.getName());
+			
+			response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));
 			//response.setContentLengthLong( file.length());这个方法用不了?
-			response.setHeader("Content-Length", file.length()+"");
-			//response.addHeader( "Cache-Control", "no-cache" );//浏览器和缓存服务器都不应该缓存页面信息
-			//response.addHeader( "Cache-Control", "no-store" );//请求和响应的信息都不应该被存储在对方的磁盘系统中；
-			//response.addHeader( "Casche-Control", "must-revalidate" );*///于客户机的每次请求，代理服务器必须想服务器验证缓存是否过时；
-			//response.setHeader( "Pragma", "no-cache" ); 
+			response.setHeader("Content-Length", String.valueOf(file.length()));
 			
 			//4.提供下载
 			FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
 			
 		} catch (Exception e) {
-			if(logger.isWarnEnabled()){
-				logger.warn("下载文件时报错", e);
-			}
-			throw new Exception(e);
+			throw new CustomException("附件下载时报错",e);
 		}
 	}
 	
@@ -127,14 +124,15 @@ public class FileDownloadController {
 	 * 用户点击批量下载时,提供该办件所有附件的打包下载.
 	 * @param tableName 事项的主表名
 	 * @param primarykey 事项的办件主键
+	 * @param corpName 企业名称
 	 * @param response
 	 */
 	@RequestMapping(value="fetchZip",method=RequestMethod.GET)
-	public void fetchZip(String tableName,String primarykey,HttpServletResponse response){
+	public void fetchZip(String tableName,String primarykey,String corpName,HttpServletRequest request,HttpServletResponse response){
 		try {
 			//1.数据检查
-			if(StringUtils.isBlank(tableName)||StringUtils.isBlank(primarykey)){
-				throw new RuntimeException("表名和主键不能为空!");
+			if(StringUtils.isBlank(tableName)||StringUtils.isBlank(primarykey)||StringUtils.isBlank(corpName)){
+				throw new RuntimeException("表名,主键,企业名称不能为空!");
 			}
 			
 			//2.封装参数
@@ -153,14 +151,17 @@ public class FileDownloadController {
 			File file=new File(zipPath.getFilePath());
 			
 			//b.设置响应头
+			//对文件名做处理,防止乱码
+			String fileName = MyWebUtils.convertToDownloadName(request, corpName+"@"+file.getName());
+			
+			response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", fileName));
 			response.setContentType("application/octet-stream;charset=UTF-8");
-			response.setHeader("Content-disposition", String.format("attachment; filename=\"%s\"", file.getName()));
 			response.setHeader("Content-Length", file.length()+"");
 			
 			//c.提供下载
 			FileCopyUtils.copy(new FileInputStream(file), response.getOutputStream());
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new CustomException("批量下载出现异常",e);
 		}
 	}
 	

@@ -12,17 +12,17 @@
 	
     <!-- 2.数据库连接池 -->
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-  		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
-        <property name="url" value="jdbc:oracle:thin:@10.132.1.145:1521:scgl"/>
-        <property name="username" value="JSZJJ_XZSP_QZ"/> 
-        <property name="password" value="JSZJJ_XZSP_QZ"/>
+  		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/> 
+        <property name="password" value="${jdbc.password}"/>
          
         <!-- 池启动时创建的连接数量 -->
-        <property name="initialSize" value="50"/>
+        <property name="initialSize" value="${dbcp.initialSize}"/>
         <!-- 在不新建连接的条件下，池中保持空闲的最少连接数。 -->
-        <property name="minIdle" value="20"/>
+        <property name="minIdle" value="${dbcp.minIdle}"/>
         <!-- 同一时间可以从池分配的最多连接数量。设置为0时表示无限制。 -->
-        <property name="maxActive" value="100"/>
+        <property name="maxActive" value="${dbcp.maxActive}"/>
         
         <!-- 事务是否自动提交  -->
         <property name="defaultAutoCommit"  value="false"/>   
@@ -47,8 +47,9 @@
     </bean>
     
     <!-- 扫描mybatis的dao接口,自动生成代理实现类 -->
-     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-    	 <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" >
+<!-- 这里不用设置,如果设置了,此时datasource还没正常读取,会报错.     	 
+<property name="sqlSessionFactory" ref="sqlSessionFactory"/> -->
      	 <property name="basePackage" value="com.hu.ssmFrame.dao"/>
      </bean>
     

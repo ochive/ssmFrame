@@ -1,4 +1,4 @@
-package com.hu.ssmFrame.constrant;
+package com.hu.ssmFrame.core.constrant;
 
 import java.io.File;
 import java.io.IOException;

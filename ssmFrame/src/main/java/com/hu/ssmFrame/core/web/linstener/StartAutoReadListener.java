@@ -1,25 +1,24 @@
-package com.hu.ssmFrame.linstener;
+package com.hu.ssmFrame.core.web.linstener;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.hu.ssmFrame.constrant.Const;
-import com.hu.ssmFrame.service.AutoReadAndDownloadAttach;
 
 /**
  * 启动定期下载附件
  * 在监听器启动之前得先加载spring bean，所以自动注入的注解在监听器里是不能用的。
  * 但可以使用从servletContext对象中创建applicationContext的方法获取ioc容器
  */
+//@WebListener
 public class StartAutoReadListener implements ServletContextListener {
 	private Logger logger=LoggerFactory.getLogger(StartAutoReadListener.class);
 
@@ -35,7 +34,7 @@ public class StartAutoReadListener implements ServletContextListener {
 		}
     	//从web应用上下文对象中获取ioc容器
     	WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(context.getServletContext());
-    	AutoReadAndDownloadAttach downAttach = webApplicationContext.getBean(AutoReadAndDownloadAttach.class);
+    	//AutoReadAndDownloadAttach downAttach = webApplicationContext.getBean(AutoReadAndDownloadAttach.class);
 		/**
 		 * ScheduledExecutorService是从Java SE5的java.util.concurrent里，做为并发工具类被引进的，这是最理想的定时任务实现方式。  
 		 * 相比于上两个方法，它有以下好处： 
@@ -48,7 +47,7 @@ public class StartAutoReadListener implements ServletContextListener {
 		ScheduledExecutorService service=Executors.newSingleThreadScheduledExecutor();
 		//启动后,10分钟执行一次,之后每30分钟执行一次.
 		//第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间  
-		service.scheduleAtFixedRate(downAttach, Const.START_TIME, Const.INTERVAL, TimeUnit.SECONDS);
+		//service.scheduleAtFixedRate(downAttach, Const.START_TIME, Const.INTERVAL, TimeUnit.SECONDS);
     }
 	
 }

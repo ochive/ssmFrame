@@ -2,13 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hu.ssmFrame.dao.AttachmentMapper">
 
-	<resultMap id="AttachmentMap" type="com.hu.ssmFrame.pojo.Attachment">
+	<resultMap id="AttachmentMap" type="String">
 		<id  column="IDT_YWBL_ATTACHMENT" property="attachmentId" jdbcType="NVARCHAR" />
 		<result column="ORD" property="ord" jdbcType="NVARCHAR" />
-		<result column="SJ_FILE_NAME" property="sjFilename" jdbcType="NVARCHAR" />
-		<result column="SOURCE_FILE" property="sourceFile" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobInputStreamTypeHandler"/>
-		<result column="SOURCE_FILE_NAME" property="sourceFilename" jdbcType="NVARCHAR" />
-		<result column="DOWNLOADED" property="downloaded" jdbcType="NCHAR" typeHandler="org.apache.ibatis.type.BooleanTypeHandler"/>
 	</resultMap>
 <!-- 根据主键，更新附件表的标志位字段downloaded为1，默认0 -->
 	<update id="updateFlag" >

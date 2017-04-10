@@ -37,10 +37,7 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
  	
-<!--自动扫描附件的监听器-->
- 	<listener>
- 		<listener-class>com.hu.ssmFrame.linstener.StartAutoReadListener</listener-class>
- 	</listener>
+
  	 
  	 
 </web-app>

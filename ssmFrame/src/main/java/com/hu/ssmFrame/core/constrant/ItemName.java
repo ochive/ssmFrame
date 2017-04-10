@@ -1,4 +1,4 @@
-package com.hu.ssmFrame.constrant;
+package com.hu.ssmFrame.core.constrant;
 
 /**
  * 事项名索引

@@ -30,27 +30,26 @@
   
   <dependencies>
   	<!-- 数据库操作dao -->
-  	<!-- 数据库驱动 
-  	<dependency>
+  	  	<dependency>
 	  <groupId>Mysql</groupId>
 	  <artifactId>mysql-connector-java</artifactId>
 	  <version>5.1.38</version>
 	</dependency>
+	
+  	<!-- 数据库驱动 
 	<dependency>
 	  <groupId>com.microsoft.sqlserver</groupId>
 	  <artifactId>sqljdbc4</artifactId>
 	  <version>4.0.0</version>
 	</dependency>
-  	-->
-  	
-  	<!-- https://mvnrepository.com/artifact/com.oracle/ojdbc6 -->
+	
 	<dependency>
 	    <groupId>com.oracle</groupId>
 	    <artifactId>ojdbc6</artifactId>
 	    <version>12.1.0.1-atlassian-hosted</version>
 	</dependency>
-
-  	
+	
+  	-->
 	
 	<!-- 连接池 -->
 	<!-- https://mvnrepository.com/artifact/com.alibaba/druid
@@ -82,21 +81,14 @@
   	<!-- 业务层 -->
   	
   	<!-- web层 -->
-  	<!-- jsp标准标签库,只是一套接口 -->
-  	<dependency>
-	  <groupId>javax.servlet.jsp.jstl</groupId>
-	  <artifactId>javax.servlet.jsp.jstl-api</artifactId>
-	  <version>1.2.1</version>
-	</dependency>
-	<!-- apache对jstl的实现 -->
-	<!-- https://mvnrepository.com/artifact/org.apache.taglibs/taglibs-standard-impl -->
+  	<!-- jsp标准标签库,包含接口和实现 -->
+  	<!-- https://mvnrepository.com/artifact/javax.servlet/jstl -->
 	<dependency>
-	    <groupId>org.apache.taglibs</groupId>
-	    <artifactId>taglibs-standard-impl</artifactId>
-	    <version>1.2.5</version>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>jstl</artifactId>
+	    <version>1.2</version>
 	</dependency>
-	
-	
+
 	<!-- java web api -->
 <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
 	<dependency>
@@ -155,6 +147,23 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
         </dependency>
+        
+<!-- oa,流程 -->
+<!-- https://mvnrepository.com/artifact/org.activiti/activiti-engine -->
+<dependency>
+    <groupId>org.activiti</groupId>
+    <artifactId>activiti-engine</artifactId>
+    <version>5.22.0</version>
+</dependency>
+
+<!-- activiti与spring集成,流程引擎processEngine由spring创建
+https://mvnrepository.com/artifact/org.activiti/activiti-spring -->
+<dependency>
+    <groupId>org.activiti</groupId>
+    <artifactId>activiti-spring</artifactId>
+    <version>5.22.0</version>
+</dependency>
+
   	
   	<!-- 日志 -->
   	<dependency>
@@ -246,7 +255,7 @@
             </executions> 
         </plugin>
         
-        <!-- 指定源码的字符集 -->
+        <!-- 指定编译源码的字符集 -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId> 
 	      <artifactId>maven-compiler-plugin</artifactId>
@@ -254,6 +263,27 @@
 	        <encoding>UTF-8</encoding>
 	      </configuration>
 	    </plugin>
+	    
+<!-- maven-surefire插件运行时的编码,防止测试时中文乱码  -->
+	    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<forkMode>once</forkMode>
+					<argLine>-Dfile.encoding=UTF-8</argLine>
+				</configuration>
+				<executions>
+		          <execution>
+		            <id>default-test</id>
+		            <phase>test</phase>
+		            <goals>
+		              <goal>test</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		</plugin>
+		
       </plugins>
     </pluginManagement>
   </build>

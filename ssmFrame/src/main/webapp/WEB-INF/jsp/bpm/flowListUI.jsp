@@ -17,8 +17,8 @@
 				<td>相关操作</td>
 			</th>
 			<c:choose>
-				<c:when test="${defiList not empty}">
-					<c:forEach items="defiList" var="defi" varStatus="vs">
+				<c:when test="${not empty defiList}">
+					<c:forEach items="${defiList}" var="defi" varStatus="vs">
 						<tr>
 							<td>${vs.count}</td>
 							<td>${defi.name}</td>
@@ -38,7 +38,7 @@
 	</div>
 	
 	<div>
-		<input type="button" onclick="deployFlowDefi()"/>
+		<input type="button" onclick="deployFlowDefi()" value="部署流程定义图"/>
 	</div>
 	
 </body>

@@ -31,6 +31,6 @@ public class FlowMgmtController {
 	public String flowListUI(Model model){
 		List<ProcessDefinition> defiList = activitiService.findLatestFlowDefi();
 		model.addAttribute("defiList", defiList);
-		return "listUI";
+		return "bpm/flowListUI";
 	}
 }

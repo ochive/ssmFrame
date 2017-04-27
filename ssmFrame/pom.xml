@@ -64,6 +64,14 @@
 		  <artifactId>commons-DBCP</artifactId>
 		  <version>1.4</version>
 		</dependency>
+	
+<!-- 轻量级持久化工具类	
+<dependency>
+    <groupId>commons-dbutils</groupId>
+    <artifactId>commons-dbutils</artifactId>
+    <version>1.6</version>
+</dependency>
+		 -->
 			
 	<dependency>
 	  <groupId>org.mybatis</groupId>
@@ -219,7 +227,8 @@ https://mvnrepository.com/artifact/org.activiti/activiti-spring -->
 		    <artifactId>junit</artifactId>
 		    <version>4.12</version>
 		</dependency>
-
+	
+		
   </dependencies>
   
 

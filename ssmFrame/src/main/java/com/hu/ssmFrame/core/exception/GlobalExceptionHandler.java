@@ -14,7 +14,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hu.ssmFrame.core.vo.ResultForAjax;
+import com.hu.ssmFrame.core.vo.JsonResult;
 
 /**
  * <pre>
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
 		
 		if (StringUtils.isNotBlank(header) && (header.equals("X-Requested-With") || header.equals("XMLHttpRequest"))) {
 			response.setContentType("application/json;charset=UTF-8");
-			ResultForAjax result = new ResultForAjax();
+			JsonResult result = new JsonResult();
 			result.setMessage(ex.getMessage());
 			
 			ServletOutputStream sos =null;
